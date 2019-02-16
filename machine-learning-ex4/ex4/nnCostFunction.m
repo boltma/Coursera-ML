@@ -61,25 +61,25 @@ Theta2_grad = zeros(size(Theta2));
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
 %
+a_1 = [ones(m, 1) X];
+z_2 = a_1 * Theta1';
+a_2 = [ones(m, 1) sigmoid(z_2)];
+z_3 = a_2 * Theta2';
+h = sigmoid(z_3);
+Y = repmat(1:size(h, 2), m, 1) == y; % recode y labels as vectors
+J = sum(sum((-Y .* log(h) - (1 - Y) .* log(1 - h)))) / m;
+reg = sum(sum((Theta1(:, 2:end)).^2)) + sum(sum((Theta2(:, 2:end)).^2));
+J = J + lambda * reg / (2 * m);
 
+% vectorize instead of for-loop
+delta_3 = h - Y;
+delta_2 = delta_3 * Theta2 .* [ones(m,1) sigmoidGradient(z_2)];
+delta_2 = delta_2(:, 2:end);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+reg1 = [zeros(size(Theta1, 1), 1) Theta1(:, 2:end)];
+reg2 = [zeros(size(Theta2, 1), 1) Theta2(:, 2:end)];
+Theta1_grad = delta_2' * a_1 / m + lambda * reg1 / m;
+Theta2_grad = delta_3' * a_2 / m + lambda * reg2 / m;
 % -------------------------------------------------------------
 
 % =========================================================================
